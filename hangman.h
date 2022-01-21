@@ -1,5 +1,5 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef HANGMAN_H
+#define HANGMAN_H
 
 void renderMainMenu();
 void renderSettingsMenu();
