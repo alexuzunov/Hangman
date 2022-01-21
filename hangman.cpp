@@ -1,4 +1,8 @@
+#include <algorithm>
+#include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 #include "global_constants.h"
 #include "hangman.h"
 
@@ -14,6 +18,10 @@ void renderMainMenu() {
         }
         std::cout << '\n' << "Command: ";
         std::cin >> choice;
+        if (choice == 'p' || choice == 'P') {
+            gameSequence(lowerLimit, upperLimit, attempts);
+            break;
+        }
         if (choice == 's' || choice == 'S') {
             renderSettingsMenu();
             break;
@@ -58,5 +66,56 @@ void renderSettingsMenu() {
         } while (newAttemptCount < 1);
         attempts = newAttemptCount;
     }
+    renderMainMenu();
+}
+
+std::string generateWord(int lowerLimit, int upperLimit) {
+    std::vector<std::string> options;
+    std::fstream dictionaryReader;
+    dictionaryReader.open("dictionary.txt", std::fstream::in);
+    std::string entry;
+
+    while (getline(dictionaryReader, entry)) {
+        if (entry.size() >= lowerLimit && entry.size() <= upperLimit) {
+            options.push_back(entry);
+        }
+    }
+
+    dictionaryReader.close();
+
+    srand(time(NULL));
+    return options[rand() % options.size()];    
+}
+
+void gameSequence(int lowerLimit, int upperLimit, int attempts) {
+    std::string word = generateWord(lowerLimit, upperLimit);
+    std::string state(word.length(), '_');
+    std::vector<char> guessedLetters;
+    char guess;
+    std::cout << "\x1B[2J\x1B[H";
+    while (word != state && attempts > 0) {
+        std::cout << "You have " << attempts << (attempts > 1 ? " attempts " : " attempt ") << "left." << '\n';
+        std::cout << "Guess the word: ";
+        for (char s : state) {
+            std::cout << s << ' ';
+        }
+        std::cout << '\n';
+        std::cin >> guess;
+        if (guess >= 'a' && guess <= 'z') {
+            if (std::find(guessedLetters.begin(), guessedLetters.end(), guess) == guessedLetters.end()) {
+                if (word.find(guess) < word.length()) {
+                    for (int i = 0; i < word.length(); ++i) {
+                        if (guess == word[i]) state[i] = guess;
+                    }
+                } else --attempts;
+            }
+        }
+        std::cout << '\n';
+    }
+    if (word != state) std::cout << "You have no attempts left. The word was " << word << ". ";
+    else std::cout << "Congratulations! You guessed the word " << word << ". ";
+    std::cout << "Press Enter to return to the main menu.";
+    std::cin.ignore();
+    std::cin.get();
     renderMainMenu();
 }
