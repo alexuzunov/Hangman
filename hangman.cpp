@@ -18,16 +18,19 @@ void renderMainMenu() {
         }
         std::cout << '\n' << "Command: ";
         std::cin >> choice;
-        if (choice == 'p' || choice == 'P') {
+        if (choice == 'P') {
             gameSequence(lowerLimit, upperLimit, attempts);
             break;
         }
-        if (choice == 's' || choice == 'S') {
+        else if (choice == 'S') {
             renderSettingsMenu();
             break;
         }
-        else if (choice == 'q' || choice == 'Q') {
+        else if (choice == 'Q') {
             std::cout << "\x1B[2J\x1B[H";
+            break;
+        } else {
+            renderMainMenu();
             break;
         }
     }
@@ -36,37 +39,43 @@ void renderMainMenu() {
 void renderSettingsMenu() {
     char settingsChoice;
     std::cout << "\x1B[2J\x1B[H";
-    for (int i = 0; i < 2; ++i) {
-        std::cout << i + 1 << ". " << settingsOptions[i] << " - " << settingsOptions[i][4] << '\n';
+    while (true) {
+        for (int i = 0; i < 2; ++i) {
+            std::cout << i + 1 << ". " << settingsOptions[i] << " - " << settingsOptions[i][4] << '\n';
+        }
+        std::cout << '\n' << "Command: ";
+        std::cin >> settingsChoice;
+        if (settingsChoice == 'L') {
+            std::cout << "\x1B[2J\x1B[H";
+            std::cout << "Current lower limit is " << lowerLimit << " and the default is " << defaultLowerLimit << "." << '\n';
+            std::cout << "Current upper limit is " << upperLimit << " and the default is " << defaultUpperLimit << "." << "\n\n";
+            int newLowerLimit, newUpperLimit;
+            do {
+                std::cout << "Please enter a valid lower limit: ";
+                std::cin >> newLowerLimit;
+            } while (newLowerLimit < defaultLowerLimit || newLowerLimit > defaultUpperLimit);
+            lowerLimit = newLowerLimit;
+            do {
+                std::cout << "Please enter a valid upper limit: ";
+                std::cin >> newUpperLimit;
+            } while (newUpperLimit < defaultLowerLimit || newUpperLimit > defaultUpperLimit || newUpperLimit < newLowerLimit);
+            upperLimit = newUpperLimit;
+        } else if (settingsChoice == 'A') {
+            std::cout << "\x1B[2J\x1B[H";
+            std::cout << "Current attempt count per round is " << attempts << ".\n";
+            int newAttemptCount;
+            do {
+                std::cout << "Please enter a valid attempt count: ";
+                std::cin >> newAttemptCount;
+            } while (newAttemptCount < 1);
+            attempts = newAttemptCount;
+        } else {
+            renderSettingsMenu();
+            break;
+        }
+        renderMainMenu();
+        break;
     }
-    std::cout << '\n' << "Command: ";
-    std::cin >> settingsChoice;
-    if (settingsChoice == 'l' || settingsChoice == 'L') {
-        std::cout << "\x1B[2J\x1B[H";
-        std::cout << "Current lower limit is " << lowerLimit << " and the default is " << defaultLowerLimit << "." << '\n';
-        std::cout << "Current upper limit is " << upperLimit << " and the default is " << defaultUpperLimit << "." << "\n\n";
-        int newLowerLimit, newUpperLimit;
-        do {
-            std::cout << "Please enter a valid lower limit: ";
-            std::cin >> newLowerLimit;
-        } while (newLowerLimit < defaultLowerLimit || newLowerLimit > defaultUpperLimit);
-        lowerLimit = newLowerLimit;
-        do {
-            std::cout << "Please enter a valid upper limit: ";
-            std::cin >> newUpperLimit;
-        } while (newUpperLimit < defaultLowerLimit || newUpperLimit > defaultUpperLimit || newUpperLimit < newLowerLimit);
-        upperLimit = newUpperLimit;
-    } else if (settingsChoice == 'a' || settingsChoice == 'A') {
-        std::cout << "\x1B[2J\x1B[H";
-        std::cout << "Current attempt count per round is " << attempts << "." << '\n';
-        int newAttemptCount;
-        do {
-            std::cout << "Please enter a valid attempt count: ";
-            std::cin >> newAttemptCount;
-        } while (newAttemptCount < 1);
-        attempts = newAttemptCount;
-    }
-    renderMainMenu();
 }
 
 std::string generateWord(int lowerLimit, int upperLimit) {
@@ -94,7 +103,7 @@ void gameSequence(int lowerLimit, int upperLimit, int attempts) {
     char guess;
     std::cout << "\x1B[2J\x1B[H";
     while (word != state && attempts > 0) {
-        std::cout << "You have " << attempts << (attempts > 1 ? " attempts " : " attempt ") << "left." << '\n';
+        std::cout << "You have " << attempts << (attempts > 1 ? " attempts " : " attempt ") << "left.\n";
         std::cout << "Guess the word: ";
         for (char s : state) {
             std::cout << s << ' ';
@@ -108,9 +117,9 @@ void gameSequence(int lowerLimit, int upperLimit, int attempts) {
                         if (guess == word[i]) state[i] = guess;
                     }
                 } else --attempts;
-            }
-        }
-        std::cout << '\n';
+                guessedLetters.push_back(guess);
+            } else std::cout << "Letter already guessed.\n";
+        } else std::cout << "Invalid symbol.\n";
     }
     if (word != state) std::cout << "You have no attempts left. The word was " << word << ". ";
     else std::cout << "Congratulations! You guessed the word " << word << ". ";
