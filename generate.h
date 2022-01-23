@@ -19,6 +19,8 @@
 #ifndef GENERATE_H
 #define GENERATE_H
 
+#include <string>
+
 std::string generateWord(int lowerLimit, int upperLimit);
 
 #endif
