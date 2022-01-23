@@ -15,9 +15,10 @@
 */
 
 #include "render.h"
+#include "global_constants.h"
 
 int main() {
-    renderMainMenu(); //Everything starts with a call to renderMainMenu()
+    renderMainMenu(defaultLowerLimit, defaultUpperLimit, defaultAttemptCount); //Everything starts with a call to renderMainMenu()
 
     return 0;
 }

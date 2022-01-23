@@ -23,6 +23,7 @@
 #include "render.h"
 
 void gameSequence(int lowerLimit, int upperLimit, int attempts) {
+    int salvageAttempts = attempts; // Store initial attempt count
     std::string word = generateWord(lowerLimit, upperLimit); // Generate a word based on the provided limits
     std::string state(word.length(), '_'); // Initialize state string for tracking the state of the word during the guessing phase 
     std::vector<char> guessedLetters; // Initialize vector which will contain letters that have already been guessed
@@ -52,5 +53,5 @@ void gameSequence(int lowerLimit, int upperLimit, int attempts) {
     std::cout << "Press Enter to return to the main menu."; 
     std::cin.ignore();
     std::cin.get(); // Pause program so the player can review his performance, resume on Enter keypress 
-    renderMainMenu(); // Render the main menu after the game is finished
+    renderMainMenu(lowerLimit, upperLimit, salvageAttempts); // Render the main menu after the game is finished
 }

@@ -17,7 +17,7 @@
 #ifndef HANGMAN_H
 #define HANGMAN_H
 
-void renderMainMenu();
-void renderSettingsMenu();
+void renderMainMenu(int lowerLimit, int upperLimit, int attempts);
+void renderSettingsMenu(int lowerLimit, int upperLimit, int attempts);
 
 #endif

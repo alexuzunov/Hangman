@@ -19,9 +19,7 @@
 #include "global_constants.h"
 #include "render.h"
 
-int lowerLimit = defaultLowerLimit, upperLimit = defaultUpperLimit, attempts = defaultAttemptCount;
-
-void renderMainMenu() {
+void renderMainMenu(int lowerLimit, int upperLimit, int attempts) {
     char choice;
     std::cout << "\x1B[2J\x1B[H"; // ANSI escape sequence - clears the screen and returns the cursor to the home position (top left)
     while (true) {
@@ -36,20 +34,21 @@ void renderMainMenu() {
             break;
         }
         else if (choice == 'S') { // Corresponds to the "Settings" option
-            renderSettingsMenu(); // Render settings menu
+            renderSettingsMenu(lowerLimit, upperLimit, attempts); // Render settings menu
             break; // Avoid an abundance of running instances which may make the interface uncomfortable to work with
         }
         else if (choice == 'Q') { // Corresponds to the "Quit" option
             std::cout << "\x1B[2J\x1B[H"; // Clear the screen and break the main menu loop, thus exiting the program
             break;
         } else {
-            renderMainMenu(); // Re-render the main menu if the command doesn't correspond to any of the available ones
+            renderMainMenu(lowerLimit, upperLimit, attempts); // Re-render the main menu if the command doesn't correspond to any of the available ones
             break; // Avoid an abundance of running instances which may make the interface uncomfortable to work with
         }
     }
 }
 
-void renderSettingsMenu() {
+void renderSettingsMenu(int lowerLimit, int upperLimit, int attempts) {
+    int newLowerLimit = lowerLimit, newUpperLimit = upperLimit, newAttemptCount = attempts;
     char settingsChoice;
     std::cout << "\x1B[2J\x1B[H";
     while (true) {
@@ -62,31 +61,26 @@ void renderSettingsMenu() {
             std::cout << "\x1B[2J\x1B[H";
             std::cout << "Current lower limit is " << lowerLimit << " and the default is " << defaultLowerLimit << "." << '\n';
             std::cout << "Current upper limit is " << upperLimit << " and the default is " << defaultUpperLimit << "." << "\n\n";
-            int newLowerLimit, newUpperLimit;
             do {
                 std::cout << "Please enter a valid lower limit: ";
                 std::cin >> newLowerLimit;
             } while (newLowerLimit < defaultLowerLimit || newLowerLimit > defaultUpperLimit); // Prompt for input until a valid lower limit is provided 
-            lowerLimit = newLowerLimit;
             do {
                 std::cout << "Please enter a valid upper limit: ";
                 std::cin >> newUpperLimit;
             } while (newUpperLimit < defaultLowerLimit || newUpperLimit > defaultUpperLimit || newUpperLimit < newLowerLimit); // Prompt for input until a valid upper limit is provided
-            upperLimit = newUpperLimit;
         } else if (settingsChoice == 'A') { // Corresponds to the "Set Attempt Count" option
             std::cout << "\x1B[2J\x1B[H";
             std::cout << "Current attempt count per round is " << attempts << ".\n";
-            int newAttemptCount;
             do {
                 std::cout << "Please enter a valid attempt count: ";
                 std::cin >> newAttemptCount;
             } while (newAttemptCount < 1); // Prompt for input until a valid attempt count is provided
-            attempts = newAttemptCount;
         } else {
-            renderSettingsMenu(); // Re-render the settings menu if the command doesn't correspond to any of the available ones 
+            renderSettingsMenu(lowerLimit, upperLimit, attempts); // Re-render the settings menu if the command doesn't correspond to any of the available ones 
             break; // Avoid an abundance of running instances which may make the interface uncomfortable to work with
         }
-        renderMainMenu(); // Re-render the main menu after the respective setting is configured
+        renderMainMenu(newLowerLimit, newUpperLimit, newAttemptCount); // Re-render the main menu after the respective setting is configured
         break; // Avoid an abundance of running instances which may make the interface uncomfortable to work with
     }
 }

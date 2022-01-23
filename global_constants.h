@@ -18,6 +18,8 @@
 #ifndef GLOBAL_CONSTANTS_H
 #define GLOBAL_CONSTANTS_H
 
+#include <string>
+
 const std::string mainMenuOptions[3] = {"Play", "Settings", "Quit"}; //Main menu options
 const std::string settingsOptions[2] = {"Set Limit (Word Length)", "Set Attempt Count"}; //Settings options
 const int defaultLowerLimit = 2, defaultUpperLimit = 14; //Default limits (define the availability of words from the dictionary)
