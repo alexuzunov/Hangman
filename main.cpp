@@ -1,5 +1,5 @@
 #include <iostream>
-#include "hangman.h"
+#include "render.h"
 
 int main() {
     renderMainMenu();
